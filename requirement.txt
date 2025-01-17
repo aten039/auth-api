@@ -1,0 +1,9 @@
+# environment variables
+> DB_URL
+> PORT
+
+
+# dependencies 
+> dotenv
+> express
+> mongoose

@@ -1,0 +1,13 @@
+#environment variables
+.env
+
+# npm
+package-lock.json
+node_modules/
+
+#DB
+
+
+#dist
+
+dist/
