@@ -1,6 +1,8 @@
 import { Request, Response } from "express"
 import User from "../models/User"
 import { hashPassword } from "../utils/passwordHash"
+import Token from "../models/Token"
+import { generateToken } from "../utils/tokenUtils"
 
 
 export class AuthController {
@@ -8,7 +10,7 @@ export class AuthController {
     static create_account = async(req:Request, res:Response)=>{
         
         try {
-
+            
             const passwordHash = await hashPassword(req.body.password)
             const userData = {
                 name: req.body.name,
@@ -22,8 +24,20 @@ export class AuthController {
             }
 
             const user = new User(userData)
+
             await user.save()
-            return res.status(200).send("usuario creado correctamente")
+
+            const token = new Token()
+            token.token = generateToken()
+            token.user = user._id
+
+            await token.save()
+            
+            // send email with token 
+
+            // send wmail withh token
+
+            return res.status(200).send("usuario creado correctamente, verifica el correo para validar")
 
         } catch (error) {
             return res.status(400).json({error:{

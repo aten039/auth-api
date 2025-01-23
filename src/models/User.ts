@@ -23,9 +23,7 @@ const userSchema:Schema = new Schema({
     phone:{
         type:String,
         null:true,
-        unique:true,
-        max: 20,
-        default: null
+        max: 20
     },
     country:{
         type:String,
@@ -34,8 +32,8 @@ const userSchema:Schema = new Schema({
     email: {
         type:String,
         require:true,
+        unique:true,
         lowercase:true,
-        unique:true
     },
     password: {
         type:String,
