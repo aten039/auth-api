@@ -1,5 +1,4 @@
 import mongoose, {Schema, Document} from "mongoose";
-import { Hash } from "node:crypto";
 
 export interface IUser extends Document {
     name:string
