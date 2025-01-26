@@ -1,9 +1,10 @@
 # environment variables
 > DB_URL
 > PORT
-
+> KEY_JWT
 
 # dependencies 
 > dotenv
 > express
 > mongoose
+>jsonwebtoken

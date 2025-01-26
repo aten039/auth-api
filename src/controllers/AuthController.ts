@@ -1,12 +1,13 @@
 import { Request, Response } from "express"
+import { hashPassword, validatePassword } from "../utils/passwordHash"
 import User from "../models/User"
-import { hashPassword } from "../utils/passwordHash"
 import Token from "../models/Token"
 import { generateToken } from "../utils/tokenUtils"
-
+import jwt from "jsonwebtoken"
 
 export class AuthController {
 
+    // create account
     static create_account = async(req:Request, res:Response)=>{
         
         try {
@@ -42,6 +43,45 @@ export class AuthController {
         } catch (error) {
             return res.status(400).json({error:{
                 message: error.message ? error.message: `Ha ocurrido un error al crear usuario, intente de nuevo.`,
+                error:true,
+            }})
+        }
+    }
+
+    //login
+
+    static login = async (req:Request, res:Response)=>{
+
+        try {
+            const user = await  User.findOne({email:req.body.email})
+
+            if (!user){
+                return res.status(404).json({error:{
+                    message:`correo electronico invalido, intente de nuevo.`,
+                    error:true,
+                }})
+            }
+
+            if(!user.confirmed){
+                // create new token and send for email
+            }
+
+            const passwordValid = await validatePassword(req.body.password, user.password)
+
+            if(!passwordValid){
+                return res.status(404).json({error:{
+                    message:`contraseña incorrecta`,
+                    error:true,
+                }})
+            }
+            
+            const token = jwt.sign({ id:user._id },process.env.KEY_JWT, { expiresIn: '150d'});
+
+            return res.status(200).send(token)
+
+        } catch (error) {
+             return res.status(400).json({error:{
+                message: error.message ? error.message: `Ha ocurrido un error al iniciar sesion, intente de nuevo.`,
                 error:true,
             }})
         }

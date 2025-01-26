@@ -14,6 +14,13 @@ authRouter.post('/create_account',
     validate_body('country', 'string'),
     validate_body('password', 'string'),
     validate_phone_data,
-    AuthController.create_account )
+    AuthController.create_account 
+)
+
+authRouter.post('/login', 
+    validate_body('email', 'string'),
+    validate_body('password', 'string'),
+    AuthController.login
+)
 
 export default authRouter
