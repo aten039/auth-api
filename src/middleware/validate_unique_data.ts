@@ -50,7 +50,6 @@ export async function validate_phone_data(req:Request, res:Response , next: Next
         //         error:true
         //     }})
         // }
-        console.log(!req.body.phone)
         if (!req.body.phone){
             return next()
         }

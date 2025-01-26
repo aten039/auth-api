@@ -38,7 +38,7 @@ export class AuthController {
 
             // send wmail withh token
 
-            return res.status(200).send("usuario creado correctamente, verifica el correo para validar")
+            return res.status(200).send("usuario creado correctamente, verifica tu correo electronico")
 
         } catch (error) {
             return res.status(400).json({error:{
@@ -85,5 +85,39 @@ export class AuthController {
                 error:true,
             }})
         }
+    }
+
+    //Confirm account 
+
+    static confirm_account = async (req:Request, res:Response) => {
+        try {
+            
+            const token = await Token.findOne({token:req.body.token})
+            
+            if(!token){
+                return res.status(404).json({error:{
+                    message:`token incorrecto`,
+                    error:true,
+                }})
+            }
+
+            const user = await User.findById(token.user)
+
+            user.confirmed = true
+
+            await Promise.all([user.save(), token.deleteOne()])
+            res.send('Cuenta confirmada correctamente')
+            
+
+        } catch (error) {
+            return res.status(400).json({error:{
+                message: error.message ? error.message: `Ha ocurrido un error al confirmar cuenta, intente de nuevo.`,
+                error:true,
+            }})
+        }
+    }
+
+    static get_account =  async (req:Request, res:Response) => {
+        
     }
 }

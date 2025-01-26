@@ -23,4 +23,13 @@ authRouter.post('/login',
     AuthController.login
 )
 
+authRouter.post('/confirm_account', 
+    validate_body('token', 'string'),
+    AuthController.confirm_account
+)
+
+authRouter.get('/get_user/:id',
+    AuthController.get_account
+)
+
 export default authRouter
