@@ -3,6 +3,7 @@ import { AuthController } from "../controllers/AuthController";
 import { validate_body } from "../middleware/validator_body";
 import { validate_email_unique, validate_phone_data } from "../middleware/validate_unique_data";
 import { validate_params } from "../middleware/validate_params";
+import { authenticate } from "../middleware/authoryzed";
 
 
 const authRouter = Router()
