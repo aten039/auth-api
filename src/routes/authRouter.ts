@@ -2,6 +2,7 @@ import { Router } from "express";
 import { AuthController } from "../controllers/AuthController";
 import { validate_body } from "../middleware/validator_body";
 import { validate_email_unique, validate_phone_data } from "../middleware/validate_unique_data";
+import { validate_params } from "../middleware/validate_params";
 
 
 const authRouter = Router()
@@ -29,6 +30,7 @@ authRouter.post('/confirm_account',
 )
 
 authRouter.get('/get_user/:id',
+    validate_params('id'),
     AuthController.get_account
 )
 

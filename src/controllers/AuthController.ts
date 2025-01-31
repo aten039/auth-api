@@ -4,6 +4,7 @@ import User from "../models/User"
 import Token from "../models/Token"
 import { generateToken } from "../utils/tokenUtils"
 import jwt from "jsonwebtoken"
+import { validate_objectId } from "../utils/validate_objectId"
 
 export class AuthController {
 
@@ -116,8 +117,38 @@ export class AuthController {
             }})
         }
     }
+    
+
+    //get User
 
     static get_account =  async (req:Request, res:Response) => {
-        
+        try {
+
+            if(!validate_objectId(req.params.id)){
+                return res.status(400).json({error:{
+                    message:`Id no valido`,
+                    error:true,
+                }})
+            }
+
+            const user = await User.findById(req.params.id).select('id name email phone country confirmed' )
+
+            if(!user){
+                return res.status(404).json({error:{
+                    message:`usuario no encontrado`,
+                    error:true,
+                }})
+            }
+
+            return res.status(200).json({user:user})
+
+        } catch (error) {
+            return res.status(400).json({error:{
+                message: error.message ? error.message: `Ha ocurrido un error en la petición, intente de nuevo.`,
+                error:true,
+            }})
+        }
     }
+
+   
 }
