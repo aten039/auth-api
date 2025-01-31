@@ -65,12 +65,18 @@ export class AuthController {
 
             if(!user.confirmed){
                 // create new token and send for email
+                
+                return res.status(400).json({error:{
+                    message:`cuenta no confirmada`,
+                    error:true,
+                }})
+
             }
 
             const passwordValid = await validatePassword(req.body.password, user.password)
 
             if(!passwordValid){
-                return res.status(404).json({error:{
+                return res.status(403).json({error:{
                     message:`contraseña incorrecta`,
                     error:true,
                 }})
