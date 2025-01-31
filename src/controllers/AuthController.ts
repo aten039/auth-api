@@ -5,6 +5,7 @@ import Token from "../models/Token"
 import { generateToken, sendTokenEmail } from "../utils/tokenUtils"
 import jwt from "jsonwebtoken"
 import { validate_objectId } from "../utils/validate_objectId"
+import BlackJwt from "../models/BlackJwt"
 
 export class AuthController {
 
@@ -57,7 +58,7 @@ export class AuthController {
             const user = await  User.findOne({email:req.body.email})
 
             if (!user){
-                return res.status(404).json({error:{
+                return res.status(401).json({error:{
                     message:`correo electronico invalido, intente de nuevo.`,
                     error:true,
                 }})
@@ -171,7 +172,7 @@ export class AuthController {
             const tokenExist = await Token.find({user: user.id})
 
             if(tokenExist.length > 2){
-                return res.status(404).json({error:{
+                return res.status(403).json({error:{
                     message:`el token ya fue enviado, verifique su email.`,
                     error:true,
                 }})
@@ -188,7 +189,7 @@ export class AuthController {
 
             // email 
 
-            res.status(200).send('Token enviado al correo')
+            return res.status(200).send('Token enviado al correo')
 
         } catch (error) {
             return res.status(500).json({error:{
@@ -198,5 +199,41 @@ export class AuthController {
         }
     }
 
-    // 
+    // change password
+
+    static change_password = async (req:Request, res:Response) => {
+
+        try {
+
+            const user = await User.findById(req.user.id)
+
+            const passwordValid = await validatePassword(req.body.password, user.password)
+
+            if(!passwordValid){
+                return res.status(401).json({error:{
+                    message:`contraseña incorrecta`,
+                    error:true,
+                }})
+            }
+
+            const newPassword = await hashPassword(req.body.newPassword)
+
+            user.password = newPassword
+
+            await user.save()
+
+            const blackToken = new BlackJwt()
+            blackToken.token = req.headers.authorization
+
+            await blackToken.save()
+            
+            return res.status(200).send('Contraseña actualizada correctamente, vuelva a iniciar sesion')
+            
+        } catch (error) {
+            return res.status(500).json({error:{
+                message: error.message ? error.message: `Ha ocurrido un error en la petición, intente de nuevo.`,
+                error:true,
+            }})
+        }
+    }
 }
