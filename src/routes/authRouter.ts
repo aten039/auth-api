@@ -35,4 +35,9 @@ authRouter.get('/get_user/:id',
     AuthController.get_account
 )
 
+authRouter.post('/new_token',
+    validate_body('id', 'string'),
+    AuthController.new_token
+)
+
 export default authRouter

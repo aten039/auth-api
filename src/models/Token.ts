@@ -1,4 +1,5 @@
 import mongoose, {Schema, Document, Types} from "mongoose";
+import { generateToken } from "../utils/tokenUtils";
 
 export interface IUser extends Document {
     name:string
@@ -15,6 +16,7 @@ const tokenSchema:Schema = new Schema({
     token: {
         type: String,
         require: true,
+        default: ()=> generateToken()
     },
     user:{
         type:Types.ObjectId,

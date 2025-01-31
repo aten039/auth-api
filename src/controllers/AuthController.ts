@@ -42,7 +42,7 @@ export class AuthController {
             return res.status(200).send("usuario creado correctamente, verifica tu correo electronico")
 
         } catch (error) {
-            return res.status(400).json({error:{
+            return res.status(500).json({error:{
                 message: error.message ? error.message: `Ha ocurrido un error al crear usuario, intente de nuevo.`,
                 error:true,
             }})
@@ -81,7 +81,7 @@ export class AuthController {
             return res.status(200).send(token)
 
         } catch (error) {
-             return res.status(400).json({error:{
+             return res.status(500).json({error:{
                 message: error.message ? error.message: `Ha ocurrido un error al iniciar sesion, intente de nuevo.`,
                 error:true,
             }})
@@ -111,7 +111,7 @@ export class AuthController {
             
 
         } catch (error) {
-            return res.status(400).json({error:{
+            return res.status(500).json({error:{
                 message: error.message ? error.message: `Ha ocurrido un error al confirmar cuenta, intente de nuevo.`,
                 error:true,
             }})
@@ -143,12 +143,52 @@ export class AuthController {
             return res.status(200).json({user:user})
 
         } catch (error) {
-            return res.status(400).json({error:{
+            return res.status(500).json({error:{
                 message: error.message ? error.message: `Ha ocurrido un error en la petición, intente de nuevo.`,
                 error:true,
             }})
         }
     }
 
- 
+    // resend token 
+
+    static new_token = async (req:Request, res:Response) => {
+        try {
+            const user = await User.findOne({_id:req.body.id})
+            
+            if (!user){
+                return res.status(404).json({error:{
+                    message:`id invalido, intente de nuevo.`,
+                    error:true,
+                }})
+            }
+
+            const tokenExist = await Token.find({user: user.id})
+
+            if(tokenExist.length > 2){
+                return res.status(404).json({error:{
+                    message:`el token ya fue enviado, verifique su email.`,
+                    error:true,
+                }})
+            }
+
+            const token = new Token()
+            token.user = user.id
+
+            await token.save()
+
+            // send token
+
+
+            // email 
+
+            res.status(200).send('Token enviado al correo')
+
+        } catch (error) {
+            return res.status(500).json({error:{
+                message: error.message ? error.message: `Ha ocurrido un error en la petición, intente de nuevo.`,
+                error:true,
+            }})
+        }
+    }
 }
