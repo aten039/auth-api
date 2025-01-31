@@ -37,6 +37,8 @@ export const authenticate =async (req:Request, res:Response, next:NextFunction)=
         }
         req.user = user
 
+        next()
+
     } catch (error) {
         return res.status(500).json({
             errors: {msg:'error en el servidor'}

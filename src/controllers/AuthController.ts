@@ -2,7 +2,7 @@ import { Request, Response } from "express"
 import { hashPassword, validatePassword } from "../utils/passwordHash"
 import User from "../models/User"
 import Token from "../models/Token"
-import { generateToken } from "../utils/tokenUtils"
+import { generateToken, sendTokenEmail } from "../utils/tokenUtils"
 import jwt from "jsonwebtoken"
 import { validate_objectId } from "../utils/validate_objectId"
 
@@ -31,12 +31,12 @@ export class AuthController {
 
             const token = new Token()
             token.token = generateToken()
-            token.user = user._id
+            token.user = user.id
 
             await token.save()
             
             // send email with token 
-
+            sendTokenEmail(token.token)
             // send wmail withh token
 
             return res.status(200).send("usuario creado correctamente, verifica tu correo electronico")
@@ -64,7 +64,6 @@ export class AuthController {
             }
 
             if(!user.confirmed){
-                // create new token and send for email
                 
                 return res.status(400).json({error:{
                     message:`cuenta no confirmada`,
@@ -185,6 +184,7 @@ export class AuthController {
 
             // send token
 
+            sendTokenEmail(token.token)
 
             // email 
 
@@ -197,4 +197,6 @@ export class AuthController {
             }})
         }
     }
+
+    // 
 }

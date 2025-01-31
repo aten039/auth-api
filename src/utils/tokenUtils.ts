@@ -7,3 +7,12 @@ export function generateToken(){
     }
     return numbers.join('')
 }
+
+export function sendTokenEmail(token:string){
+
+    // code for send email
+
+    //
+
+    console.log(`enviando token: ${token}`)
+}
