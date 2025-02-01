@@ -2,7 +2,7 @@ import { Router } from "express";
 import { AuthController } from "../controllers/AuthController";
 import { validate_body } from "../middleware/validator_body";
 import { validate_email_unique, validate_phone_data } from "../middleware/validate_unique_data";
-import { validate_params } from "../middleware/validate_params";
+// import { validate_params } from "../middleware/validate_params";
 import { authenticate } from "../middleware/authoryzed";
 
 
@@ -30,10 +30,13 @@ authRouter.post('/confirm_account',
     AuthController.confirm_account
 )
 
-authRouter.get('/get_user/:id',
-    validate_params('id'),
-    AuthController.get_account
-)
+//get account data with id
+
+// authRouter.get('/get_user/:id',
+//     authenticate,
+//     validate_params('id'),
+//     AuthController.get_account
+// )
 
 authRouter.post('/new_token',
     validate_body('id', 'string'),
@@ -45,6 +48,11 @@ authRouter.post('/change_password',
     validate_body('password', 'string'),
     validate_body('newPassword', 'string'),
     AuthController.change_password
+)
+
+authRouter.post('/forgot_password_request',
+    validate_body('email', 'string'),
+    AuthController.forgot_password_request
 )
 
 export default authRouter

@@ -44,7 +44,7 @@ export class AuthController {
 
         } catch (error) {
             return res.status(500).json({error:{
-                message: error.message ? error.message: `Ha ocurrido un error al crear usuario, intente de nuevo.`,
+                message: `Ha ocurrido un error al crear usuario, intente de nuevo.`,
                 error:true,
             }})
         }
@@ -59,7 +59,7 @@ export class AuthController {
 
             if (!user){
                 return res.status(401).json({error:{
-                    message:`correo electronico invalido, intente de nuevo.`,
+                    message:`Datos erroneos, intente nuevamente.`,
                     error:true,
                 }})
             }
@@ -77,7 +77,7 @@ export class AuthController {
 
             if(!passwordValid){
                 return res.status(403).json({error:{
-                    message:`contraseña incorrecta`,
+                    message:`Datos erroneos, intente nuevamente.`,
                     error:true,
                 }})
             }
@@ -88,7 +88,7 @@ export class AuthController {
 
         } catch (error) {
              return res.status(500).json({error:{
-                message: error.message ? error.message: `Ha ocurrido un error al iniciar sesion, intente de nuevo.`,
+                message: `Ha ocurrido un error al iniciar sesion, intente de nuevo.`,
                 error:true,
             }})
         }
@@ -118,7 +118,7 @@ export class AuthController {
 
         } catch (error) {
             return res.status(500).json({error:{
-                message: error.message ? error.message: `Ha ocurrido un error al confirmar cuenta, intente de nuevo.`,
+                message: `Ha ocurrido un error al confirmar cuenta, intente de nuevo.`,
                 error:true,
             }})
         }
@@ -132,7 +132,7 @@ export class AuthController {
 
             if(!validate_objectId(req.params.id)){
                 return res.status(400).json({error:{
-                    message:`Id no valido`,
+                    message:`Ha ocurrido un error`,
                     error:true,
                 }})
             }
@@ -141,7 +141,7 @@ export class AuthController {
 
             if(!user){
                 return res.status(404).json({error:{
-                    message:`usuario no encontrado`,
+                    message:`ha ocurrido un error`,
                     error:true,
                 }})
             }
@@ -150,7 +150,7 @@ export class AuthController {
 
         } catch (error) {
             return res.status(500).json({error:{
-                message: error.message ? error.message: `Ha ocurrido un error en la petición, intente de nuevo.`,
+                message: `Ha ocurrido un error en la petición, intente de nuevo.`,
                 error:true,
             }})
         }
@@ -162,21 +162,18 @@ export class AuthController {
         try {
             const user = await User.findOne({_id:req.body.id})
             
-            if (!user){
-                return res.status(404).json({error:{
-                    message:`id invalido, intente de nuevo.`,
+            if(!user){
+                return res.status(400).json({error:{
+                    message:`ha ocurrido un error`,
                     error:true,
                 }})
             }
 
-            const tokenExist = await Token.find({user: user.id})
-
-            if(tokenExist.length > 2){
-                return res.status(403).json({error:{
-                    message:`el token ya fue enviado, verifique su email.`,
-                    error:true,
-                }})
+            const tokenExist = await Token.findOne({"user":user.id})
+            if(tokenExist){
+                await tokenExist.deleteOne()
             }
+            
 
             const token = new Token()
             token.user = user.id
@@ -193,7 +190,7 @@ export class AuthController {
 
         } catch (error) {
             return res.status(500).json({error:{
-                message: error.message ? error.message: `Ha ocurrido un error en la petición, intente de nuevo.`,
+                message: `Ha ocurrido un error en la petición, intente de nuevo.`,
                 error:true,
             }})
         }
@@ -231,9 +228,60 @@ export class AuthController {
             
         } catch (error) {
             return res.status(500).json({error:{
-                message: error.message ? error.message: `Ha ocurrido un error en la petición, intente de nuevo.`,
+                message: `Ha ocurrido un error en la petición, intente de nuevo.`,
                 error:true,
             }})
         }
     }
+
+    // forgot your password 
+
+    static forgot_password_request = async (req:Request, res:Response) => {
+
+        try {
+            
+            const user = await User.findOne({"email":req.body.email})
+
+            if(!user){
+                return res.status(400).json({error:{
+                    message:`ha ocurrido un error`,
+                    error:true,
+                }})
+            }
+
+            if(!user.confirmed){
+                return res.status(400).json({error:{
+                    message:`usuario no confirmado.`,
+                    error:true,
+                }})
+            }
+
+            const tokens = Token.find({user:user.id})
+
+            if(tokens){
+                await tokens.deleteOne()
+            }
+
+            const token = new Token()
+            token.user = user.id
+
+            await token.save()
+
+            //send email
+            sendTokenEmail(token.token)
+            // 
+
+            return res.status(200).send('verifica tu correo electronico o telefono.')
+
+        } catch (error) {
+            return res.status(500).json({error:{
+                message: `Ha ocurrido un error en la petición, intente de nuevo.`,
+                error:true,
+            }})
+        }
+
+
+    }
+
+
 }
