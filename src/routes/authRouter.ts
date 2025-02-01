@@ -55,4 +55,10 @@ authRouter.post('/forgot_password_request',
     AuthController.forgot_password_request
 )
 
+authRouter.post('/forgot_password',
+    validate_body('email', 'string'),
+    validate_body('token', 'string'),
+    AuthController.forgot_password
+)
+
 export default authRouter

@@ -6,16 +6,14 @@ export  function validate_body( property:string, type:string) {
         try {
             if (!req.body.hasOwnProperty(property)){
                 return res.status(400).json({error:{
-                    message: `La propiedad ${property} es obligatoria`,
-                    property: property,
+                    message: `Ha ocurrido un error al procesar su solicitud`,
                     error:true
                 }})
             }
     
             if( typeof req.body[property] != type ){
                 return res.status(400).json({error:{
-                    message: `La propiedad ${property} tiene un valor incorrecto`,
-                    property: property,
+                    message: `Ha ocurrido un error al procesar su solicitud`,
                     error:true
                 }})
             }

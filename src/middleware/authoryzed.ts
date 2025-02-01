@@ -27,7 +27,7 @@ export const authenticate = async (req:Request, res:Response, next:NextFunction)
 
         if(blackToken){
             return res.status(401).json({
-                message: `token incorrecto`,
+                message: `problemas con la sesion`,
                 error:true
             })
         }

@@ -234,7 +234,7 @@ export class AuthController {
         }
     }
 
-    // forgot your password 
+    // forgot your password request
 
     static forgot_password_request = async (req:Request, res:Response) => {
 
@@ -256,7 +256,7 @@ export class AuthController {
                 }})
             }
 
-            const tokens = Token.find({user:user.id})
+            const tokens = await Token.findOne({user:user.id})
 
             if(tokens){
                 await tokens.deleteOne()
@@ -279,9 +279,53 @@ export class AuthController {
                 error:true,
             }})
         }
-
-
     }
 
+    //forgot your password
+
+    static forgot_password = async (req:Request, res:Response) => {
+
+        try {
+            
+            const user = await User.findOne({"email":req.body.email})
+
+            if(!user){
+                return res.status(400).json({error:{
+                    message:`ha ocurrido un error`,
+                    error:true,
+                }})
+            }
+
+            const token = await Token.findOne({token:req.body.token})
+
+            if(!token){
+                return res.status(400).json({error:{
+                    message:`ha ocurrido un error`,
+                    error:true,
+                }})
+            }
+
+            if(token.user.toString() !== user.id.toString()){
+                return res.status(400).json({error:{
+                    message:`ha ocurrido un error`,
+                    error:true,
+                }})
+                
+            }
+            const jwtoken = jwt.sign({ id:user._id },process.env.KEY_JWT, { expiresIn: '15m'});
+
+            await token.deleteOne()
+            
+            return res.status(200).send(jwtoken)
+
+
+        } catch (error) {
+            return res.status(500).json({error:{
+                message: `Ha ocurrido un error en la petición, intente de nuevo.`,
+                error:true,
+            }})
+        }
+
+    }
 
 }
