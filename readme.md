@@ -22,3 +22,51 @@ structure (MVC)
 *validatePassword(password, hash):Promise<boolean><br>
 *generateToken<br>
 *validate_objectId(objectId:string):boolean<br>
+
+you have that write code in  utils/tokenUtils/sendTokenEmail, is a function for send tokens to email. 
+
+>routes 
+/auth/<br>
+
+/create_account  post <br>
+{
+"name":"",
+"lastName":"",
+"email":"correo@correo.com",
+"password":"12345678",
+"country":"",
+"phone":"optional"
+}
+
+/login post <br>
+{
+  "email":"correo@correo.com",
+  "password":"12345678"
+}
+
+/confirm_account<br>
+{
+"token":"332162"
+}
+
+/new_token post<br>
+{
+  "id":""
+}
+
+/change_password post "change password with token login"<br>
+{
+  "password":"12345678",
+  "newPassword":"12345678"
+}
+
+/forgot_password_request  post "create token"<br>
+{
+  "email":"correo@correo.com"
+}
+
+/forgot_password  post "create token login for change password"<br>
+{
+  "email":"correo@correo.com",
+  "token":"928251"
+}

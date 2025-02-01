@@ -3,7 +3,8 @@
 > PORT
 > KEY_JWT
 
-# dependencies 
+# dependencies
+> bcrypt 
 > dotenv
 > express
 > mongoose
