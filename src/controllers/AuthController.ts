@@ -110,10 +110,18 @@ export class AuthController {
 
             const user = await User.findById(token.user)
 
-            user.confirmed = true
+            if(user.confirmed){
+                await token.deleteOne()
+                return res.status(500).json({error:{
+                    message: `La cuenta ya se encuentra confirmada.`,
+                    error:true,
+                }})
+            }else{
+                user.confirmed = true
+            }
 
             await Promise.all([user.save(), token.deleteOne()])
-            res.send('Cuenta confirmada correctamente')
+            return res.send('Cuenta confirmada correctamente')
             
 
         } catch (error) {
