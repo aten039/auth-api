@@ -7,10 +7,11 @@ import cors from "cors"
 import { limiter } from "./config/limiters";
 import { limitPayloadSize } from "./config/limitPayload";
 import { error_cors_json } from "./middleware/error_cors_json";
+import { timeout } from "./config/timeouts";
 
 connectDb()
 const app = express()
-
+app.use(timeout)
 app.use(cors(corsConfig))
 app.use(error_cors_json)
 
