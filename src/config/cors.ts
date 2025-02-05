@@ -16,4 +16,6 @@ export const corsConfig: CorsOptions = {
             callback(new Error('errors CORS'));
         }
     },
+    credentials:true
+    
 }
